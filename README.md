@@ -221,6 +221,10 @@ private String generateFileKey(String originalFileName) {
     return "custom-path/" + datePath + "/" + uuid + extension;
 }
 ```
+## 🐰 预览
+![上传](images/img.png)
+![文件列表](images/img_1.png)
+
 
 ## 📄 许可证
 
