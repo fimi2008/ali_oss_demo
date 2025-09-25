@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSS文件上传演示</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>OSS文件上传演示</h1>
+            <p>基于Spring Boot + 阿里云OSS的文件上传解决方案</p>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalCount">0</div>
+                <div class="stat-label">总文件数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="successCount">0</div>
+                <div class="stat-label">上传成功</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="pendingCount">0</div>
+                <div class="stat-label">待上传</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="failedCount">0</div>
+                <div class="stat-label">上传失败</div>
+            </div>
+        </div>
+
+        <!-- 文件上传卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <h2>📁 文件上传</h2>
+            </div>
+            <div class="card-body">
+                <!-- 上传区域 -->
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-text">点击选择文件或拖拽文件到此处</div>
+                    <div class="upload-hint">支持 JPG、PNG、PDF、DOC、XLS 等格式，最大100MB</div>
+                    <input type="file" class="file-input" id="fileInput" accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar">
+                </div>
+
+                <!-- 文件信息 -->
+                <div class="file-info" id="fileInfo">
+                    <h4>📋 文件信息</h4>
+                    <p><strong>文件名：</strong><span id="fileName"></span></p>
+                    <p><strong>文件大小：</strong><span id="fileSize"></span></p>
+                    <p><strong>文件类型：</strong><span id="fileType"></span></p>
+                </div>
+
+                <!-- 进度条 -->
+                <div class="progress" id="progress">
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress-text" id="progressText">0%</div>
+                    </div>
+                </div>
+
+                <!-- 上传按钮 -->
+                <div style="text-align: center; margin-top: 1rem;">
+                    <button class="btn btn-primary" id="uploadBtn">开始上传</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文件管理卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <h2>📊 文件管理</h2>
+            </div>
+            <div class="card-body">
+                <!-- 搜索表单 -->
+                <form class="search-form" id="searchForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="searchFileName">文件名</label>
+                            <input type="text" class="form-control" id="searchFileName" name="originalName" placeholder="输入文件名搜索">
+                        </div>
+                        <div class="form-group">
+                            <label for="searchStatus">上传状态</label>
+                            <select class="form-control" id="searchStatus" name="uploadStatus">
+                                <option value="">全部状态</option>
+                                <option value="0">待上传</option>
+                                <option value="1">上传成功</option>
+                                <option value="2">上传失败</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-primary" id="searchBtn">🔍 搜索</button>
+                            <button type="button" class="btn btn-secondary" id="resetBtn">🔄 重置</button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- 文件列表表格 -->
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>文件名</th>
+                                <th>文件大小</th>
+                                <th>文件类型</th>
+                                <th>状态</th>
+                                <th>上传时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fileTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align: center; color: #6c757d;">加载中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 分页 -->
+                <div class="pagination" id="pagination">
+                    <!-- 分页按钮将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 使用说明卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <h2>📖 使用说明</h2>
+            </div>
+            <div class="card-body">
+                <h3>功能特性</h3>
+                <ul>
+                    <li><strong>安全上传：</strong>基于阿里云OSS签名机制，确保上传安全性</li>
+                    <li><strong>直传模式：</strong>前端直接上传到OSS，减轻服务器压力</li>
+                    <li><strong>进度显示：</strong>实时显示上传进度，提升用户体验</li>
+                    <li><strong>文件管理：</strong>完整的文件信息管理和查询功能</li>
+                    <li><strong>类型限制：</strong>支持多种文件格式，可配置文件类型和大小限制</li>
+                </ul>
+
+                <h3>配置说明</h3>
+                <p>在使用前，请确保在 <code>application.yml</code> 中正确配置以下信息：</p>
+                <ul>
+                    <li><code>oss.access-key-id</code>：阿里云AccessKey ID</li>
+                    <li><code>oss.access-key-secret</code>：阿里云AccessKey Secret</li>
+                    <li><code>oss.bucket-name</code>：OSS存储桶名称</li>
+                    <li><code>oss.endpoint</code>：OSS服务端点</li>
+                </ul>
+
+                <h3>技术架构</h3>
+                <ul>
+                    <li><strong>后端：</strong>Spring Boot + Spring Data JPA + H2数据库</li>
+                    <li><strong>前端：</strong>原生JavaScript + CSS3</li>
+                    <li><strong>存储：</strong>阿里云对象存储OSS</li>
+                    <li><strong>数据库：</strong>H2内存数据库（可切换为MySQL等）</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>

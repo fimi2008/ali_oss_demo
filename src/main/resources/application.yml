@@ -1,0 +1,47 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: oss-upload-demo
+  
+  # H2数据库配置
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  # JPA配置
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  
+  # H2控制台配置
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+# OSS配置
+oss:
+  endpoint: https://oss-cn-hangzhou.aliyuncs.com  # OSS服务端点
+  access-key-id: YOUR_ACCESS_KEY_ID               # 替换为你的AccessKey ID
+  access-key-secret: YOUR_ACCESS_KEY_SECRET       # 替换为你的AccessKey Secret
+  bucket-name: YOUR_BUCKET_NAME                   # 替换为你的存储桶名称
+  # 签名有效期（秒）
+  signature-expire-time: 3600
+  # 文件大小限制（字节）
+  max-file-size: 104857600  # 100MB
+  # 允许的文件类型
+  allowed-file-types: jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip,rar
+
+logging:
+  level:
+    com.example.ossupload: DEBUG
+    org.springframework.web: DEBUG
